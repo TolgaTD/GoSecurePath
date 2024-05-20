@@ -11,13 +11,11 @@ import (
 )
 
 func main() {
-	// OAuth2 yöneticisi oluşturma
-	manager := manage.NewDefaultManager()
 
-	// Token saklama deposu olarak bellek tabanlı bir yapı kullanma
+	manager := manage.NewDefaultManager()
 	manager.MustTokenStorage(store.NewMemoryTokenStore())
 
-	// Client bilgilerini saklamak için bellek tabanlı bir yapı kullanma
+
 	clientStore := store.NewClientStore()
 	clientStore.Set("client_id", &models.Client{
 		ID:     "client_id",
@@ -26,10 +24,9 @@ func main() {
 	})
 	manager.MapClientStorage(clientStore)
 
-	// OAuth2 sunucusu oluşturma
+
 	srv := server.NewDefaultServer(manager)
 
-	// Yetkilendirme endpoint'i
 	http.HandleFunc("/authorize", func(w http.ResponseWriter, r *http.Request) {
 		err := srv.HandleAuthorizeRequest(w, r)
 		if err != nil {
@@ -37,7 +34,6 @@ func main() {
 		}
 	})
 
-	// Token endpoint'i
 	http.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
 		err := srv.HandleTokenRequest(w, r)
 		if err != nil {
